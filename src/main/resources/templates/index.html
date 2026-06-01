@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Правда или действие | для братвы</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&display=swap"
+          rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #4a0e2e, #8a2c5a, #c45c7a, #e88da0);
+            background-size: 300% 300%;
+            animation: romanticShift 14s ease infinite;
+            color: #fff8f0;
+            padding: 2rem 0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        @keyframes romanticShift {
+            0% {
+                background-position: 0% 30%;
+            }
+            50% {
+                background-position: 100% 70%;
+            }
+            100% {
+                background-position: 0% 30%;
+            }
+        }
+
+        /* Мерцающие блики */
+        .blob {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 200, 210, 0.25), rgba(255, 80, 120, 0.1));
+            border-radius: 50%;
+            filter: blur(110px);
+            z-index: 0;
+            animation: floatBlob 22s infinite alternate ease-in-out;
+        }
+
+        .blob-1 {
+            top: -200px;
+            left: -200px;
+            background: radial-gradient(circle, rgba(255, 140, 160, 0.3), rgba(200, 60, 100, 0.1));
+        }
+
+        .blob-2 {
+            bottom: -200px;
+            right: -200px;
+            background: radial-gradient(circle, rgba(255, 100, 130, 0.25), rgba(180, 40, 80, 0.1));
+            animation-duration: 28s;
+        }
+
+        .blob-3 {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255, 180, 200, 0.2), rgba(220, 80, 120, 0.08));
+            filter: blur(130px);
+            animation: pulseBlob 18s infinite alternate;
+        }
+
+        @keyframes floatBlob {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(80px, 80px) scale(1.2);
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes pulseBlob {
+            0% {
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            100% {
+                opacity: 0.7;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(120deg, #fff0f5, #ffb6c1, #ff69b4, #db7093);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shimmerLove 5s linear infinite;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px rgba(255, 105, 180, 0.5);
+        }
+
+        @keyframes shimmerLove {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .logo p {
+            font-size: 1.2rem;
+            color: #ffe0e8;
+            text-shadow: 0 0 5px #ff69b4;
+        }
+
+        .glass-card {
+            background: rgba(50, 20, 40, 0.55);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 180, 200, 0.5);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(255, 105, 180, 0.25);
+            border-color: rgba(255, 200, 220, 0.7);
+        }
+
+        .btn-glow {
+            background: linear-gradient(95deg, #d45c7a, #b23a5c);
+            border: none;
+            color: #fff0f5;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            border-radius: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(210, 70, 110, 0.5);
+        }
+
+        .btn-glow:hover {
+            transform: scale(1.02);
+            background: linear-gradient(95deg, #e47c9a, #c45a7c);
+            box-shadow: 0 6px 20px rgba(230, 90, 130, 0.7);
+        }
+
+        .form-control {
+            background: rgba(40, 15, 30, 0.7);
+            border: 1px solid rgba(255, 180, 200, 0.5);
+            color: #ffeef4;
+            border-radius: 1.5rem;
+            padding: 0.7rem 1.2rem;
+        }
+
+        .form-control:focus {
+            background: rgba(60, 25, 45, 0.85);
+            border-color: #ff80a0;
+            box-shadow: 0 0 0 0.25rem rgba(255, 128, 160, 0.4);
+            color: white;
+        }
+
+        .list-group-item {
+            background: rgba(70, 35, 55, 0.55);
+            border: none;
+            margin-bottom: 0.6rem;
+            border-radius: 1rem !important;
+            color: #fff0f5;
+            transition: all 0.2s ease;
+        }
+
+        .list-group-item:hover {
+            background: rgba(150, 80, 110, 0.6);
+            transform: translateX(5px);
+        }
+
+        .badge-gender {
+            background: rgba(255, 200, 220, 0.4);
+            color: #ffd9e6;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-play {
+            background: rgba(255, 160, 180, 0.2);
+            border: 1px solid #ff99bb;
+            color: #ffe0ec;
+            border-radius: 2rem;
+            padding: 0.3rem 1rem;
+            transition: all 0.2s;
+        }
+
+        .btn-play:hover {
+            background: #d45c7a;
+            color: #2a0f1c;
+            box-shadow: 0 0 12px #ff99bb;
+            transform: scale(1.03);
+        }
+
+        .btn-warning-custom {
+            background: linear-gradient(135deg, #e07c9c, #b84a6a);
+            border: none;
+            color: #fff0f5;
+            font-weight: bold;
+            border-radius: 2rem;
+            padding: 0.7rem 1.8rem;
+            transition: all 0.3s;
+        }
+
+        .btn-warning-custom:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(210, 80, 120, 0.5);
+            background: linear-gradient(135deg, #f09cb0, #c86a8a);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            opacity: 0.8;
+            font-size: 0.9rem;
+            color: #ffcddf;
+        }
+
+        .emoji-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .raindrop {
+            position: absolute;
+            top: -50px;
+            font-size: 1.6rem;
+            opacity: 0.65;
+            user-select: none;
+            pointer-events: none;
+            animation: fallRomantic linear infinite;
+        }
+
+        @keyframes fallRomantic {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+            80% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .modal-gender {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(40, 15, 30, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeInModal 0.3s ease;
+        }
+
+        @keyframes fadeInModal {
+            from {
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+            to {
+                opacity: 1;
+                backdrop-filter: blur(8px);
+            }
+        }
+
+        .modal-content-gender {
+            background: rgba(60, 25, 45, 0.95);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid rgba(255, 180, 200, 0.6);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content-gender h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffc0d0, #ff80a0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .gender-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .gender-btn {
+            background: rgba(255, 200, 220, 0.15);
+            border: 1px solid rgba(255, 150, 180, 0.5);
+            border-radius: 3rem;
+            padding: 0.8rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffeef4;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .gender-btn:hover {
+            background: rgba(200, 80, 120, 0.6);
+            transform: scale(1.02);
+            border-color: #ff99bb;
+            box-shadow: 0 0 12px #ff99bb;
+        }
+
+        .cancel-gender {
+            background: transparent;
+            border: none;
+            color: #ffa5c0;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .cancel-gender:hover {
+            color: #ffcce0;
+            text-shadow: 0 0 5px #ff80a0;
+        }
+
+        textarea.form-control {
+            background: rgba(40, 15, 30, 0.8);
+            border-radius: 1.5rem;
+            color: #ffeef4;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+
+<div class="emoji-rain" id="emojiRain"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="container">
+    <!-- Верхняя панель кнопок -->
+    <div class="text-end mb-3">
+        <a href="/admin" class="btn btn-glow" style="background: #8a6c9c;">⚙️ Управление заданиями</a>
+        <button class="btn btn-glow" onclick="openAddTaskModal()">✏️ Добавить задание</button>
+    </div>
+
+    <!-- Логотип -->
+    <div class="logo text-center mb-4">
+        <h1>🎭 Правда или действие</h1>
+        <p>🦄 Пикми эдишн 🦄</p>
+    </div>
+
+    <!-- Карточка добавления нового игрока -->
+    <div class="glass-card p-4 mb-5">
+        <h4 class="mb-3">✨ Новый игрок</h4>
+        <form id="addPlayerForm" method="post" th:action="@{/addPlayer}" th:object="${newPlayer}">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <input type="text" name="name" id="playerName" class="form-control" placeholder="Имя игрока" required>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-glow w-100" onclick="openGenderModal()">➕ Добавить</button>
+                </div>
+            </div>
+            <input type="hidden" name="gender" id="playerGender" value="">
+        </form>
+    </div>
+
+    <!-- Активные игроки -->
+    <div class="glass-card p-4 mb-4">
+        <h3 class="mb-3">🎮 Активные игроки</h3>
+        <ul class="list-group">
+            <li th:each="player : ${activePlayers}"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <span th:text="${player.name}" style="font-weight: 600;"></span>
+                    <span th:if="${player.gender}" class="badge-gender ms-2" th:text="${player.gender}"></span>
+                </div>
+                <div>
+                    <a th:href="@{/play(playerName=${player.name})}" class="btn btn-play btn-sm me-2">Играть</a>
+                    <form method="post" th:action="@{/removeActive}" style="display: inline;">
+                        <input type="hidden" name="playerName" th:value="${player.name}">
+                        <button type="submit" class="btn btn-sm btn-danger" style="border-radius: 2rem; background-color: #b23a5c; border: none;">✖ Убрать</button>
+                    </form>
+                </div>
+            </li>
+            <li th:if="${activePlayers.empty}" class="list-group-item text-center" style="background: transparent;">
+                💔 Нет активных игроков. Добавьте кого-то уже.
+            </li>
+        </ul>
+        <div class="mt-4 text-center" th:if="${not activePlayers.empty}">
+            <a href="/play" class="btn btn-warning-custom">🎲 Случайный игрок</a>
+        </div>
+    </div>
+
+    <!-- Карточка выбора сложности (отдельный блок) -->
+    <div class="glass-card p-4 mb-4">
+        <h3 class="mb-3">🎚️ Выбери сложность заданий</h3>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="EASY" id="diffEasy">
+            <label class="form-check-label" for="diffEasy">🍏 Простые (для любой компании)</label>
+        </div>
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="MEDIUM" id="diffMedium">
+            <label class="form-check-label" for="diffMedium">🌶️ Средние (погорячее)</label>
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" value="HARD" id="diffHard">
+            <label class="form-check-label" for="diffHard">🔥 Жёсткие / 18+ (только для взрослых)</label>
+        </div>
+        <button id="saveDifficultiesBtn" class="btn btn-glow">💾 Сохранить выбор</button>
+        <span id="savedMsg" class="ms-3 text-success" style="display: none;">✓ Сохранено</span>
+    </div>
+
+    <!-- История игроков -->
+    <div class="glass-card p-4">
+        <h3 class="mb-3">📜 Ранее игравшие (Б/у)</h3>
+        <ul class="list-group">
+            <li th:each="player : ${historyPlayers}"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <span th:text="${player.name}"></span>
+                    <span th:if="${player.gender}" class="badge-gender ms-2" th:text="${player.gender}"></span>
+                </div>
+                <div>
+                    <form method="post" th:action="@{/addPreviousPlayer}" style="display: inline;">
+                        <input type="hidden" name="playerId" th:value="${player.id}">
+                        <button type="submit" class="btn btn-sm btn-success" style="border-radius: 2rem; background-color: #6a3c5c; border: none;">➕ Добавить</button>
+                    </form>
+                    <form method="post" th:action="@{/deleteHistory}" style="display: inline; margin-left: 0.5rem;">
+                        <input type="hidden" name="playerId" th:value="${player.id}">
+                        <button type="submit" class="btn btn-sm btn-danger" style="border-radius: 2rem; background-color: #b23a5c; border: none;" onclick="return confirm('Удалить игрока из истории навсегда?')">🗑 Удалить</button>
+                    </form>
+                </div>
+            </li>
+            <li th:if="${historyPlayers.empty}" class="list-group-item" style="background: transparent;">💭 Пока нет воспоминаний... Добавьте новых игроков.</li>
+        </ul>
+    </div>
+
+    <footer>💜Оформление делала иишка, ниче так да?💜</footer>
+
+    <!-- Дисклеймер, клятва и ссылка на телеграм -->
+    <div class="glass-card p-4 mt-5" style="text-align: center; font-size: 0.9rem; background: rgba(50,20,40,0.85); backdrop-filter: blur(8px);">
+        <p>📜 <strong>ВАЖНАЯ ХЕРНЯ:</strong> Добавляя своё имя и пол, вы даёте согласие на то, что эти данные будут храниться в базе данных на компьютере <strong>Владосика</strong> (а он, кстати, и сам не знает зачем, но так надо). Ваши секреты под защитой: никто их не увидит, кроме... ну, кроме самого Влада, но он обещал молчать 🤐.</p>
+        <p>⚡ <strong>КЛЯТВА ИГРОКА:</strong> «Я, [твоё имя], клянусь отвечать только правду и ничего кроме правды, а если выбираю действие — исполнять его честно, без обид и отмазок. Иначе пусть меня засосёт в губы грязный бомж Инокентий 🦄».</p>
+        <p>⚠️ За все задания ответственность несёт исключительно <strong>исполнитель</strong>. Автор игры умывает руки.</p>
+        <p>📱 По всем вопросам (сюда не пишите) —
+            <a href="https://t.me/mosseuz" target="_blank" style="color: #ff99bb; text-decoration: none; font-weight: bold;">
+                📲 Телеграмка солнцеликого
+            </a>
+            <span style="font-size:1.2rem;">🔗</span>
+        </p>
+        <p>💖 <em>ЗАЛУПА</em> 💖</p>
+    </div>
+</div>
+
+<!-- Модальное окно выбора пола -->
+<div id="genderModal" class="modal-gender">
+    <div class="modal-content-gender">
+        <h3>✨ Выбери свой пол ✨</h3>
+        <div class="gender-options">
+            <div class="gender-btn" onclick="selectGender('Мужской')">👨 Мужской</div>
+            <div class="gender-btn" onclick="selectGender('Женский')">👩 Женский</div>
+        </div>
+        <button class="cancel-gender" onclick="closeGenderModal()">✖ Отмена</button>
+    </div>
+</div>
+
+<!-- Модальное окно добавления задания -->
+<div id="addTaskModal" class="modal-gender">
+    <div class="modal-content-gender">
+        <h3>💌 Новое задание</h3>
+        <textarea id="taskText" rows="3" class="form-control mb-3" placeholder="Напиши откровенный или романтичный вопрос/действие..."></textarea>
+        <div class="gender-options">
+            <div class="gender-btn" onclick="submitTask('truth')">📖 Правда</div>
+            <div class="gender-btn" onclick="submitTask('dare')">💪 Действие</div>
+        </div>
+        <select id="taskDifficulty" class="form-control mb-3">
+            <option value="EASY">🍏 Простая</option>
+            <option value="MEDIUM">🌶️ Средняя</option>
+            <option value="HARD">🔥 Жёсткая (18+)</option>
+        </select>
+        <button class="cancel-gender" onclick="closeAddTaskModal()">✖ Отмена</button>
+        <div id="taskMessage" class="mt-2 text-center" style="font-size:0.9rem;"></div>
+    </div>
+</div>
+
+<script>
+    // --- Модалка выбора пола ---
+    function openGenderModal() {
+        let nameInput = document.getElementById('playerName');
+        if (!nameInput.value.trim()) {
+            alert('Сначала введите имя игрока!');
+            return;
+        }
+        document.getElementById('genderModal').style.display = 'flex';
+    }
+
+    function closeGenderModal() {
+        document.getElementById('genderModal').style.display = 'none';
+    }
+
+    function selectGender(gender) {
+        document.getElementById('playerGender').value = gender;
+        closeGenderModal();
+        document.getElementById('addPlayerForm').submit();
+    }
+
+    // --- Модалка добавления задания ---
+    function openAddTaskModal() {
+        document.getElementById('addTaskModal').style.display = 'flex';
+        document.getElementById('taskText').value = '';
+        document.getElementById('taskMessage').innerHTML = '';
+    }
+
+    function closeAddTaskModal() {
+        document.getElementById('addTaskModal').style.display = 'none';
+    }
+
+    function submitTask(type) {
+        let text = document.getElementById('taskText').value.trim();
+        let difficulty = document.getElementById('taskDifficulty') ? document.getElementById('taskDifficulty').value : 'EASY';
+        if (!text) {
+            document.getElementById('taskMessage').innerHTML = '<span style="color: #ffa5c0;">Придумай что-нибудь прикольное</span>';
+            return;
+        }
+        $.post('/addQuestion', {text: text, type: type, difficulty: difficulty}, function (response) {
+            if (response.status === 'success') {
+                document.getElementById('taskMessage').innerHTML = '<span style="color: #ff99bb;">✓ Задание добавлено</span>';
+                setTimeout(() => {
+                    closeAddTaskModal();
+                }, 1500);
+            } else {
+                document.getElementById('taskMessage').innerHTML = '<span style="color: #ffa5c0;">Ошибка, попробуй снова</span>';
+            }
+        }).fail(() => {
+            document.getElementById('taskMessage').innerHTML = '<span style="color: #ffa5c0;">Серверная ошибка</span>';
+        });
+    }
+
+    // Закрытие модалки при клике вне окна
+    window.onclick = function (event) {
+        let modalGender = document.getElementById('genderModal');
+        let modalTask = document.getElementById('addTaskModal');
+        if (event.target === modalGender) closeGenderModal();
+        if (event.target === modalTask) closeAddTaskModal();
+    };
+
+    // --- дождь из эмодзи ---
+    const romanticEmojis = ['💜', '🌸', '🎭', '✨', '💖', '🎀', '🍭', '🦄', '🌟', '💗', '🎈', '⭐', '💕', '🌺'];
+    const rainContainer = document.getElementById('emojiRain');
+    const numberOfDrops = 55;
+
+    function createRaindrop() {
+        const drop = document.createElement('div');
+        drop.classList.add('raindrop');
+        const randomEmoji = romanticEmojis[Math.floor(Math.random() * romanticEmojis.length)];
+        drop.textContent = randomEmoji;
+        const size = 1.2 + Math.random() * 1.4;
+        drop.style.fontSize = `${size}rem`;
+        drop.style.left = `${Math.random() * 100}%`;
+        const duration = 6 + Math.random() * 12;
+        drop.style.animationDuration = `${duration}s`;
+        drop.style.animationDelay = `${Math.random() * 10}s`;
+        drop.style.opacity = 0.4 + Math.random() * 0.5;
+        rainContainer.appendChild(drop);
+        drop.addEventListener('animationend', () => {
+            drop.remove();
+            createRaindrop();
+        });
+    }
+
+    for (let i = 0; i < numberOfDrops; i++) {
+        createRaindrop();
+    }
+
+    // Сохранение выбранных сложностей
+    function saveDifficulties() {
+        let selected = [];
+        if ($('#diffEasy').is(':checked')) selected.push('EASY');
+        if ($('#diffMedium').is(':checked')) selected.push('MEDIUM');
+        if ($('#diffHard').is(':checked')) selected.push('HARD');
+        if (selected.length === 0) {
+            alert('Выберите хотя бы один уровень сложности!');
+            return;
+        }
+        localStorage.setItem('gameDifficulties', JSON.stringify(selected));
+        $('#savedMsg').fadeIn(300).delay(1500).fadeOut(500);
+    }
+
+    function loadDifficulties() {
+        let saved = localStorage.getItem('gameDifficulties');
+        if (saved) {
+            let diffs = JSON.parse(saved);
+            $('#diffEasy').prop('checked', diffs.includes('EASY'));
+            $('#diffMedium').prop('checked', diffs.includes('MEDIUM'));
+            $('#diffHard').prop('checked', diffs.includes('HARD'));
+        } else {
+            $('#diffEasy, #diffMedium, #diffHard').prop('checked', true);
+            saveDifficulties();
+        }
+    }
+
+    $(document).ready(function() {
+        loadDifficulties();
+        $('#saveDifficultiesBtn').click(saveDifficulties);
+    });
+</script>
+</body>
+</html>

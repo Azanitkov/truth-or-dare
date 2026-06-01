@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: 6
+      author: vlad
+      comment: Добавляем колонку difficulty в truth_questions и dare_actions
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            columnExists:
+              tableName: truth_questions
+              columnName: difficulty
+      changes:
+        - addColumn:
+            tableName: truth_questions
+            columns:
+              - column: { name: difficulty, type: VARCHAR(20), defaultValue: "EASY" }
+        - addColumn:
+            tableName: dare_actions
+            columns:
+              - column: { name: difficulty, type: VARCHAR(20), defaultValue: "EASY" }

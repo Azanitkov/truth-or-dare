@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Правда или действие | Игра для братвы</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(145deg, #4a0e2e, #8a2c5a, #c45c7a, #e88da0);
+      background-size: 300% 300%;
+      animation: romanticShift 14s ease infinite;
+      color: #fff8f0;
+      padding: 2rem 0;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    @keyframes romanticShift {
+      0% { background-position: 0% 30%; }
+      50% { background-position: 100% 70%; }
+      100% { background-position: 0% 30%; }
+    }
+
+    .blob {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 200, 210, 0.25), rgba(255, 80, 120, 0.1));
+      border-radius: 50%;
+      filter: blur(110px);
+      z-index: 0;
+      animation: floatBlob 22s infinite alternate ease-in-out;
+    }
+    .blob-1 { top: -200px; left: -200px; background: radial-gradient(circle, rgba(255, 140, 160, 0.3), rgba(200, 60, 100, 0.1)); }
+    .blob-2 {
+      bottom: -200px;
+      right: -200px;
+      background: radial-gradient(circle, rgba(255, 100, 130, 0.25), rgba(180, 40, 80, 0.1));
+      animation-duration: 28s;
+    }
+    .blob-3 {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255, 180, 200, 0.2), rgba(220, 80, 120, 0.08));
+      filter: blur(130px);
+      animation: pulseBlob 18s infinite alternate;
+    }
+
+    @keyframes floatBlob {
+      0% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+      100% { transform: translate(80px, 80px) scale(1.2); opacity: 0.9; }
+    }
+    @keyframes pulseBlob {
+      0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+      100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.2); }
+    }
+
+    .container { position: relative; z-index: 2; }
+
+    .logo h1 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      background: linear-gradient(120deg, #fff0f5, #ffb6c1, #ff69b4, #db7093);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmerLove 5s linear infinite;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px rgba(255, 105, 180, 0.5);
+    }
+    @keyframes shimmerLove {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+    .logo p {
+      font-size: 1.1rem;
+      color: #ffe0e8;
+      text-shadow: 0 0 5px #ff69b4;
+    }
+
+    .game-card {
+      background: rgba(50, 20, 40, 0.65);
+      backdrop-filter: blur(12px);
+      border-radius: 2rem;
+      border: 1px solid rgba(255, 180, 200, 0.5);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      transition: transform 0.3s ease;
+    }
+
+    .player-name {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(120deg, #ffb6c1, #ff69b4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+    }
+
+    .btn-neon {
+      font-size: 1.3rem;
+      font-weight: 700;
+      padding: 0.8rem 1.8rem;
+      border-radius: 3rem;
+      transition: 0.2s;
+      border: none;
+    }
+    .btn-truth {
+      background: linear-gradient(95deg, #ac5e7e, #8e3e5e);
+      box-shadow: 0 4px 12px rgba(200, 80, 120, 0.5);
+    }
+    .btn-truth:hover {
+      transform: scale(1.02);
+      background: linear-gradient(95deg, #bc6e8e, #9e4e6e);
+      box-shadow: 0 6px 18px rgba(200, 80, 120, 0.8);
+    }
+    .btn-dare {
+      background: linear-gradient(95deg, #d45c7a, #b23a5c);
+      box-shadow: 0 4px 12px rgba(210, 70, 110, 0.5);
+    }
+    .btn-dare:hover {
+      transform: scale(1.02);
+      background: linear-gradient(95deg, #e47c9a, #c45a7c);
+      box-shadow: 0 6px 18px rgba(210, 70, 110, 0.8);
+    }
+
+    .result-box {
+      background: rgba(0, 0, 0, 0.6);
+      border-left: 5px solid #ff80a0;
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      font-size: 1.1rem;
+      backdrop-filter: blur(4px);
+      animation: fadeSlide 0.4s ease;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .next-btn {
+      background: rgba(255, 200, 220, 0.2);
+      border: 1px solid #ff99bb;
+      border-radius: 2rem;
+      color: #ffe0ec;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+    .next-btn:hover {
+      background: #b85c82;
+      border-color: #b85c82;
+      color: #1e1028;
+      box-shadow: 0 2px 10px #ff99bb;
+      transform: scale(1.02);
+    }
+
+    .custom-select {
+      background: rgba(40, 15, 30, 0.75);
+      border: 1px solid rgba(255, 180, 200, 0.5);
+      border-radius: 2rem;
+      padding: 0.6rem 1rem;
+      color: #ffeef4;
+    }
+    .custom-select option {
+      background: #2a0f1c;
+    }
+    .btn-outline-light-custom {
+      background: rgba(255, 200, 220, 0.15);
+      border: 1px solid #ff99bb;
+      border-radius: 2rem;
+      color: #ffe0ec;
+      transition: 0.2s;
+      padding: 0.5rem 1rem;
+    }
+    .btn-outline-light-custom:hover {
+      background: #d45c7a;
+      border-color: #d45c7a;
+      color: #2a0f1c;
+      box-shadow: 0 0 10px #ff99bb;
+    }
+
+    /* Дождь из эмодзи */
+    .emoji-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .raindrop {
+      position: absolute;
+      top: -50px;
+      font-size: 1.6rem;
+      opacity: 0.65;
+      user-select: none;
+      pointer-events: none;
+      animation: fallRomantic linear infinite;
+    }
+    @keyframes fallRomantic {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+      80% { opacity: 0.4; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      opacity: 0.8;
+      font-size: 0.9rem;
+      color: #ffcddf;
+    }
+
+    .btn-home {
+      background: rgba(255, 200, 220, 0.3);
+      border-radius: 2rem;
+      color: #ffe0ec;
+      text-decoration: none;
+      padding: 0.4rem 1rem;
+      font-size: 0.9rem;
+      transition: 0.2s;
+      border: 1px solid rgba(255, 200, 220, 0.5);
+    }
+    .btn-home:hover {
+      background: #d45c7a;
+      color: #2a0f1c;
+      border-color: #d45c7a;
+    }
+
+    @media (max-width: 640px) {
+      .player-name { font-size: 1.6rem; }
+      .btn-neon { font-size: 1rem; padding: 0.5rem 1.2rem; }
+      .logo h1 { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="emoji-rain" id="emojiRain"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="container py-3 py-md-4">
+  <!-- Кнопка "На главную" в правом верхнем углу -->
+  <div class="d-flex justify-content-end mb-2">
+    <a href="/" class="btn-home">🏠 На главную</a>
+  </div>
+
+  <div class="logo text-center mb-4">
+    <h1>🎭 Правда или действие</h1>
+    <p>🔥 Ну че народ! погнали! 🔥</p>
+  </div>
+
+  <!-- Карточка выбора игрока -->
+  <div class="game-card p-4 mb-5">
+    <div class="row align-items-center">
+      <div class="col-md-6 mb-3 mb-md-0">
+        <div th:if="${selectedPlayer != null}">
+          <span class="opacity-75">💜 Текущий игрок</span>
+          <div class="player-name" th:text="${selectedPlayer.name}"></div>
+          <div th:if="${selectedPlayer.gender}" class="mt-1">
+            <span class="badge bg-white text-dark" th:text="${selectedPlayer.gender}" style="background: #e0b0c8 !important;"></span>
+          </div>
+        </div>
+        <div th:if="${selectedPlayer == null}" class="alert alert-warning bg-dark bg-opacity-50" style="border-color:#ff99bb;">⚠️ Нет активных игроков — <a href="/" style="color:#ff80a0;">добавить игроков?</a></div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">🔄 Сменить игрока</label>
+        <select id="playerSelect" class="custom-select w-100">
+          <option th:each="p : ${activePlayers}" th:value="${p.name}" th:text="${p.name}"></option>
+        </select>
+        <button class="btn-outline-light-custom w-100 mt-2 py-2" onclick="changePlayer()">Выбрать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Игровая зона -->
+  <div th:if="${selectedPlayer != null}" class="text-center game-card p-4 p-md-5">
+    <h3 class="mb-4"><span th:text="${selectedPlayer.name}"></span>, твой ход</h3>
+    <div class="d-flex flex-wrap justify-content-center gap-3 gap-md-4">
+      <button class="btn-neon btn-truth px-4 px-md-5" onclick="getTruth()">📖 Правда</button>
+      <button class="btn-neon btn-dare px-4 px-md-5" onclick="getDare()">💪 Действие</button>
+    </div>
+    <!-- Кнопка "Готово — передать ход" -->
+    <div class="mt-4">
+      <button class="next-btn px-4 py-2" onclick="nextPlayer()">✅ Готово — передать ход</button>
+    </div>
+    <!-- Блок для отображения результата -->
+    <div id="result" class="result-box mt-4" style="display: none;"></div>
+  </div>
+
+  <footer>💜Оформление делала иишка, ниче так да?💜</footer>
+</div>
+
+<script th:inline="javascript">
+  var currentPlayerName = /*[[${selectedPlayer != null ? selectedPlayer.name : ''}]]*/ '';
+
+  function changePlayer() {
+    let player = $('#playerSelect').val();
+    if (player) {
+      window.location.href = '/play?playerName=' + encodeURIComponent(player);
+    }
+  }
+
+  // Функция для получения сохранённых сложностей из localStorage
+  function getSelectedDifficulties() {
+    let diffs = localStorage.getItem('gameDifficulties');
+    if (!diffs) {
+      // По умолчанию все сложности (через запятую)
+      return 'EASY,MEDIUM,HARD';
+    }
+    try {
+      let arr = JSON.parse(diffs);
+      return arr.join(',');
+    } catch(e) {
+      return 'EASY,MEDIUM,HARD';
+    }
+  }
+
+  function getTruth() {
+    let difficulties = getSelectedDifficulties();
+    $.get('/getTruth', { difficulties: difficulties }, function(data) {
+      $('#result').html('<span class="opacity-75">📖 Правда:</span><br><strong style="font-size:1.4rem;">' + data + '</strong>').fadeIn(250);
+      $('html, body').animate({ scrollTop: $('#result').offset().top - 20 }, 400);
+    }).fail(function() {
+      $('#result').html('<span class="opacity-75">⚠️ Ошибка загрузки вопроса. Проверьте соединение.</span>').fadeIn(250);
+    });
+  }
+
+  function getDare() {
+    let difficulties = getSelectedDifficulties();
+    $.get('/getDare', { difficulties: difficulties }, function(data) {
+      $('#result').html('<span class="opacity-75">💪 Действие:</span><br><strong style="font-size:1.4rem;">' + data + '</strong>').fadeIn(250);
+      $('html, body').animate({ scrollTop: $('#result').offset().top - 20 }, 400);
+    }).fail(function() {
+      $('#result').html('<span class="opacity-75">⚠️ Ошибка загрузки действия. Проверьте соединение.</span>').fadeIn(250);
+    });
+  }
+
+  function nextPlayer() {
+    if (currentPlayerName && currentPlayerName.trim() !== "") {
+      window.location.href = '/nextPlayer?currentPlayerName=' + encodeURIComponent(currentPlayerName.trim());
+    } else {
+      window.location.href = '/';
+    }
+  }
+
+  // --- Дождь из эмодзи ---
+  const romanticEmojis = ['💜', '🌸', '🎭', '✨', '💖', '🎀', '🍭', '🦄', '🌟', '💗', '🎈', '⭐', '💕', '🌺'];
+  const rainContainer = document.getElementById('emojiRain');
+  const numberOfDrops = 55;
+  function createRaindrop() {
+    const drop = document.createElement('div');
+    drop.classList.add('raindrop');
+    const randomEmoji = romanticEmojis[Math.floor(Math.random() * romanticEmojis.length)];
+    drop.textContent = randomEmoji;
+    const size = 1.2 + Math.random() * 1.4;
+    drop.style.fontSize = `${size}rem`;
+    drop.style.left = `${Math.random() * 100}%`;
+    const duration = 6 + Math.random() * 12;
+    drop.style.animationDuration = `${duration}s`;
+    drop.style.animationDelay = `${Math.random() * 10}s`;
+    drop.style.opacity = 0.4 + Math.random() * 0.5;
+    rainContainer.appendChild(drop);
+    drop.addEventListener('animationend', () => {
+      drop.remove();
+      createRaindrop();
+    });
+  }
+  for (let i = 0; i < numberOfDrops; i++) {
+    createRaindrop();
+  }
+</script>
+</body>
+</html>

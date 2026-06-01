@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Управление заданиями | Правда или действие</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(145deg, #4a0e2e, #8a2c5a, #c45c7a, #e88da0);
+            background-size: 300% 300%;
+            animation: romanticShift 14s ease infinite;
+            color: #fff8f0;
+            padding: 2rem 0;
+            min-height: 100vh;
+        }
+
+        @keyframes romanticShift {
+            0% { background-position: 0% 30%; }
+            50% { background-position: 100% 70%; }
+            100% { background-position: 0% 30%; }
+        }
+
+        .glass-card {
+            background: rgba(50, 20, 40, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 180, 200, 0.5);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .table-scroll {
+            max-height: 550px;
+            overflow-y: auto;
+            border-radius: 1rem;
+        }
+
+        .table-custom {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 1rem;
+            width: 100%;
+        }
+
+        .table-custom thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .table-custom th {
+            background: rgba(0, 0, 0, 0.65);
+            color: #ffefef;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #ff99bb;
+            position: sticky;
+            top: 0;
+        }
+
+        .table-custom td {
+            color: #ffffff;
+            border-color: rgba(255, 180, 200, 0.3);
+            vertical-align: middle;
+            padding: 0.75rem;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        /* Поля ввода – textarea для полного текста */
+        .form-control-sm {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.8rem;
+            background: #fff5f8;
+            border: 1px solid #d48aaa;
+            color: #2d1b2a;
+            font-weight: 500;
+            border-radius: 1rem;
+            width: 100%;
+            min-width: 0;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        textarea.form-control-sm {
+            min-height: 70px;
+            line-height: 1.4;
+        }
+
+        .btn-sm-custom {
+            background: rgba(255, 200, 220, 0.2);
+            border: 1px solid #ff99bb;
+            border-radius: 2rem;
+            padding: 0.3rem 1rem;
+            color: #ffe0ec;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-sm-custom:hover {
+            background: #d45c7a;
+            color: #2a0f1c;
+        }
+
+        .save-all-btn {
+            background: #6a3c5c;
+            border: none;
+            margin-left: 1rem;
+            padding: 0.3rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        h2 {
+            background: linear-gradient(120deg, #ffb6c1, #ff69b4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .back-link {
+            background: rgba(255, 200, 220, 0.3);
+            border-radius: 2rem;
+            padding: 0.4rem 1.2rem;
+            color: #ffe0ec;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .back-link:hover {
+            background: #d45c7a;
+            color: #1e1028;
+        }
+
+        @media (max-width: 768px) {
+            .form-control-sm {
+                font-size: 0.85rem;
+            }
+            .btn-sm-custom {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.6rem;
+            }
+            .table-scroll {
+                max-height: 400px;
+            }
+            textarea.form-control-sm {
+                min-height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📋 Управление заданиями</h2>
+        <a href="/admin-area/logout" class="back-link">🏠 На главную</a>
+    </div>
+
+    <!-- Блок Правда -->
+    <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>📖 Вопросы "Правда"</h3>
+            <button type="button" class="btn-sm-custom save-all-btn" id="saveAllTruthsBtn">💾 Сохранить все вопросы</button>
+        </div>
+        <div class="table-scroll">
+            <table class="table table-custom" id="truthTable">
+                <thead>
+                <tr>
+                    <th style="width: 60px">ID</th>
+                    <th>Текст</th>
+                    <th style="width: 140px">Сложность</th>
+                    <th style="width: 100px">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="t : ${truths}">
+                    <td th:text="${t.id}"></td>
+                    <td>
+                        <input type="hidden" class="truth-id" th:value="${t.id}">
+                        <textarea class="form-control-sm truth-text" rows="2" th:text="${t.text}" required></textarea>
+                    </td>
+                    <td>
+                        <select class="form-control-sm truth-difficulty" style="width:auto;">
+                            <option value="EASY" th:selected="${t.difficulty == 'EASY'}">🍏 Простая</option>
+                            <option value="MEDIUM" th:selected="${t.difficulty == 'MEDIUM'}">🌶️ Средняя</option>
+                            <option value="HARD" th:selected="${t.difficulty == 'HARD'}">🔥 Жёсткая (18+)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn-sm-custom delete-truth-btn" th:data-id="${t.id}" style="background:rgba(200,70,100,0.6);">🗑 Удалить</button>
+                    </td>
+                </tr>
+                <tr th:if="${truths.empty}">
+                    <td colspan="4" class="text-center">✨ Пока нет вопросов. Добавьте через главную страницу ✨</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Блок Действие -->
+    <div class="glass-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>💪 Действия</h3>
+            <button type="button" class="btn-sm-custom save-all-btn" id="saveAllDaresBtn">💾 Сохранить все действия</button>
+        </div>
+        <div class="table-scroll">
+            <table class="table table-custom" id="dareTable">
+                <thead>
+                <tr>
+                    <th style="width: 60px">ID</th>
+                    <th>Текст</th>
+                    <th style="width: 140px">Сложность</th>
+                    <th style="width: 100px">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="d : ${dares}">
+                    <td th:text="${d.id}"></td>
+                    <td>
+                        <input type="hidden" class="dare-id" th:value="${d.id}">
+                        <textarea class="form-control-sm dare-text" rows="2" th:text="${d.text}" required></textarea>
+                    </td>
+                    <td>
+                        <select class="form-control-sm dare-difficulty" style="width:auto;">
+                            <option value="EASY" th:selected="${d.difficulty == 'EASY'}">🍏 Простая</option>
+                            <option value="MEDIUM" th:selected="${d.difficulty == 'MEDIUM'}">🌶️ Средняя</option>
+                            <option value="HARD" th:selected="${d.difficulty == 'HARD'}">🔥 Жёсткая (18+)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn-sm-custom delete-dare-btn" th:data-id="${d.id}" style="background:rgba(200,70,100,0.6);">🗑 Удалить</button>
+                    </td>
+                </tr>
+                <tr th:if="${dares.empty}">
+                    <td colspan="4" class="text-center">✨ Пока нет действий. Добавьте через главную страницу ✨</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showToast(text, isError) {
+        let toast = $('#toastMsg');
+        if (!toast.length) {
+            $('body').append('<div id="toastMsg" style="position:fixed; bottom:20px; right:20px; background:#2d1b2a; color:white; padding:0.75rem 1.5rem; border-radius:2rem; z-index:9999; display:none;"></div>');
+            toast = $('#toastMsg');
+        }
+        toast.text(text).css('background', isError ? '#8a2c5a' : '#2d1b2a').fadeIn(300);
+        setTimeout(() => toast.fadeOut(500), 2500);
+    }
+
+    // Массовое обновление правды
+    $('#saveAllTruthsBtn').click(function() {
+        let updates = [];
+        $('#truthTable tbody tr').each(function() {
+            let id = $(this).find('.truth-id').val();
+            let text = $(this).find('.truth-text').val();
+            let difficulty = $(this).find('.truth-difficulty').val();
+            if (id && text) updates.push({ id: id, text: text, difficulty: difficulty });
+        });
+        if (updates.length === 0) { showToast('Нет данных для сохранения', true); return; }
+        $.ajax({
+            url: '/admin/truth/update-all',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(updates),
+            success: function(res) { showToast('Сохранено ' + updates.length + ' вопросов', false); },
+            error: function() { showToast('Ошибка массового сохранения', true); }
+        });
+    });
+
+    // Массовое обновление действий
+    $('#saveAllDaresBtn').click(function() {
+        let updates = [];
+        $('#dareTable tbody tr').each(function() {
+            let id = $(this).find('.dare-id').val();
+            let text = $(this).find('.dare-text').val();
+            let difficulty = $(this).find('.dare-difficulty').val();
+            if (id && text) updates.push({ id: id, text: text, difficulty: difficulty });
+        });
+        if (updates.length === 0) { showToast('Нет данных для сохранения', true); return; }
+        $.ajax({
+            url: '/admin/dare/update-all',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(updates),
+            success: function(res) { showToast('Сохранено ' + updates.length + ' действий', false); },
+            error: function() { showToast('Ошибка массового сохранения', true); }
+        });
+    });
+
+    // Удаление вопроса
+    $(document).on('click', '.delete-truth-btn', function() {
+        if (!confirm('Точно удалить вопрос?')) return;
+        let id = $(this).data('id');
+        $.post('/admin/truth/delete', { id: id })
+            .done(function() { location.reload(); })
+            .fail(function() { showToast('Ошибка удаления', true); });
+    });
+
+    // Удаление действия
+    $(document).on('click', '.delete-dare-btn', function() {
+        if (!confirm('Точно удалить действие?')) return;
+        let id = $(this).data('id');
+        $.post('/admin/dare/delete', { id: id })
+            .done(function() { location.reload(); })
+            .fail(function() { showToast('Ошибка удаления', true); });
+    });
+</script>
+</body>
+</html>

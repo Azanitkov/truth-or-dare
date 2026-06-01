@@ -1,0 +1,14 @@
+com\example\truthordare\Repository\TruthQuestionRepository.class
+com\example\truthordare\Controller\GameController.class
+com\example\truthordare\model\Player.class
+com\example\truthordare\Controller\AdminAuthController.class
+com\example\truthordare\model\TruthQuestion.class
+com\example\truthordare\service\GameService.class
+com\example\truthordare\Repository\PlayerRepository.class
+com\example\truthordare\Repository\DareActionRepository.class
+com\example\truthordare\Controller\DTO\TruthUpdateDto.class
+com\example\truthordare\config\WebConfig.class
+com\example\truthordare\config\AdminInterceptor.class
+com\example\truthordare\Controller\DTO\DareUpdateDto.class
+com\example\truthordare\TruthOrDareApplication.class
+com\example\truthordare\model\DareAction.class

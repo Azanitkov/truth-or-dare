@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4
+      author: vlad
+      comment: Добавление начальных вопросов "Правда"
+      changes:
+        - insert: { tableName: truth_questions, columns: [ { name: text, value: "Какая у тебя самая неловкая привычка?" } ] }
+        - insert: { tableName: truth_questions, columns: [ { name: text, value: "Кого из присутствующих ты хотел(а) бы поцеловать?" } ] }
+        - insert: { tableName: truth_questions, columns: [ { name: text, value: "Когда ты в последний раз плакал(а)?" } ] }
+        - insert: { tableName: truth_questions, columns: [ { name: text, value: "Расскажи о своей самой большой глупости" } ] }
+        - insert: { tableName: truth_questions, columns: [ { name: text, value: "Чего ты боишься больше всего?" } ] }
+
+  - changeSet:
+      id: 5
+      author: vlad
+      comment: Добавление начальных действий
+      changes:
+        - insert: { tableName: dare_actions, columns: [ { name: text, value: "Станцуй странный танец 10 секунд" } ] }
+        - insert: { tableName: dare_actions, columns: [ { name: text, value: "Сделай комплимент игроку слева от тебя" } ] }
+        - insert: { tableName: dare_actions, columns: [ { name: text, value: "Изобрази любое животное, пока не угадают" } ] }
+        - insert: { tableName: dare_actions, columns: [ { name: text, value: "Расскажи анекдот" } ] }
+        - insert: { tableName: dare_actions, columns: [ { name: text, value: "Сделай 5 приседаний" } ] }

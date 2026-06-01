@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: vlad
+      preConditions:
+        - onFail: MARK_RAN
+          tableExists:
+            tableName: players
+      changes:
+        - createTable:
+            tableName: players
+            columns:
+              - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true } }
+              - column: { name: name, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: gender, type: VARCHAR(50) }
+              - column: { name: completed_tasks, type: INT, defaultValue: 0 }
+              - column: { name: title, type: VARCHAR(100) }
+
+  - changeSet:
+      id: 2
+      author: vlad
+      preConditions:
+        - onFail: MARK_RAN
+          tableExists:
+            tableName: truth_questions
+      changes:
+        - createTable:
+            tableName: truth_questions
+            columns:
+              - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true } }
+              - column: { name: text, type: VARCHAR(1000), constraints: { nullable: false } }
+
+  - changeSet:
+      id: 3
+      author: vlad
+      preConditions:
+        - onFail: MARK_RAN
+          tableExists:
+            tableName: dare_actions
+      changes:
+        - createTable:
+            tableName: dare_actions
+            columns:
+              - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true } }
+              - column: { name: text, type: VARCHAR(1000), constraints: { nullable: false } }
